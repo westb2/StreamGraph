@@ -1,9 +1,11 @@
 import billboard
 import datetime
+from random import shuffle
 
 #initialize the data
+
 startDate = datetime.date(2015,1,1)
-endDate   = datetime.date(2015,3,31)
+endDate   = datetime.date(2015,12,31)
 ouputFile = open("2015charts.csv","w")
 
 date = startDate
@@ -32,12 +34,19 @@ while date <= endDate:
 		print numCharts
 	date += oneDay
 
+i=0
+maxsongs=10
+songKeys=songData.keys()
+shuffle(songKeys)
 #insert a score of zero for every day a song was not on the chart
-for songKey, dayRanks in songData.iteritems():
-	for day in days:
-		if day in dayRanks:
-			ouputFile.write("%s,%d,%s\n" %(songKey,dayRanks[day],day))
-		else:
-			ouputFile.write("%s,%d,%s\n" %(songKey,0,day))
+for songKey in songKeys:
+	dayRanks=songData[songKey]
+	i+=1
+	if i<=maxsongs:
+		for day in days:
+			if day in dayRanks:
+				ouputFile.write("%s,%d,%s\n" %(songKey,dayRanks[day],day))
+			else:
+				ouputFile.write("%s,%d,%s\n" %(songKey,0,day))
 
 ouputFile.close()
