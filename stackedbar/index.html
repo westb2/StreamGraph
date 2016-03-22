@@ -27,18 +27,20 @@
 </style>
 <form>
     <!-- <label><input type="radio" name="mode" value="grouped"> Grouped</label> -->
-    <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+<!--    <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>-->
 </form>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script>
-    var n = 4, // number of layers
-        m = 58, // number of samples per layer
+    var n = 15, // number of layers
+        m = 52, // number of samples per layer
         stack = d3.layout.stack(),
-        layers = stack(d3.range(n).map(function() { return bumpLayer(m, .1); })),
+        layers = stack(d3.range(n).map(function() { 
+            return bumpLayer(m, .2); 
+        })),
         yGroupMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y; }); }),
         yStackMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); });
 
-    console.log(bumpLayer(m,.1));
+    console.log(layers);
 
 
     var margin = {top: 40, right: 10, bottom: 20, left: 10},
@@ -53,9 +55,15 @@
         .domain([0, yStackMax])
         .range([height, 0]);
 
-    var color = d3.scale.linear()
-        .domain([0, n - 1])
-        .range(["#aad", "#556"]);
+//    var color = d3.scale.linear()
+//        .domain([0, n - 1])
+//        .range(["#0000ff", "#00ff00"]);
+    
+    var color_range = ["#1F77B4", "#AEC7E8", "#FF7F0E", "#FFBB78", "#2CA02C", "#98DF8A", "#D62728", "#FF9896", "#9467BD", "#C5B0D5", "#8C564P", "#C49C94", "#E377C2", "#F7B6D2", "#7F7F7F", "#C7C7C7", "#BCBD22", "#DBDB8D", "#17BECF", "#9EDAE5"];
+    
+    
+    
+    function color(i) {return color_range[n-i]};
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -92,6 +100,24 @@
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
+//
+//    // Inspired by Lee Byron's test data generator.
+//    function bumpLayer(n, o) {
+//      function bump(a) {
+//        var x = 1 / (.1 + Math.random()),
+//            y = 2 * Math.random() - .5,
+//            z = 10 / (.1 + Math.random());
+//        for (var i = 0; i < n; i++) {
+//          var w = (i / n - y) * z;
+//          a[i] += x * Math.exp(-w * w);
+//        }
+//      }
+//
+//      var a = [], i;
+//      for (i = 0; i < n; ++i) a[i] = o + o * Math.random();
+//      for (i = 0; i < 5; ++i) bump(a);
+//      return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+//    }
 
     // Inspired by Lee Byron's test data generator.
     function bumpLayer(n, o) {
@@ -110,5 +136,9 @@
       for (i = 0; i < 5; ++i) bump(a);
       return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
     }
+    
+    var data = d3.csv("../2015charts.csv")
+    .row(function(d) { return {key: d.key, value: +d.value}; })
+    .get(function(error, rows) { console.log(rows); });
 
 </script>
